@@ -12,8 +12,6 @@ yearlyStockChange
 findGreatestIncrease
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' find greatest decrease
 findGreatestDecrease
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' convert formulas to values on current sheet
-ConvertFormulasToValuesInActiveWorksheet
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' find greatest volume
 findGreatestVolume
 End Sub
@@ -59,31 +57,29 @@ Sub totalStockVolume()
 Dim ticker As String
 Dim currentRowTicker As String
 Dim rowCount As Long
+Dim stockVolume As Double
 Dim resultRow As Long
 Dim i As Long
-Dim firstTickerRow As Long
-Dim lastTickerRow As Long
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' count total amount of rows
 rowCount = Cells(2, 1).End(xlDown).Row
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' set ticker
 ticker = Cells(2, 1).Value
 resultRow = 2
-firstTickerRow = 2
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' iterate through each row
 For i = 2 To rowCount
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' set ticker
     currentRowTicker = Range("A" & i).Value
     If ticker <> currentRowTicker Then
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' output results for current ticker
-        lastTickerRow = i - 1
         Range("I" & resultRow).Value = ticker
-        Range("L" & resultRow).Formula = "=Sum(G" & firstTickerRow & ":G" & lastTickerRow & ")"
+        Range("L" & resultRow).Value = stockVolume
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' set new ticker to be tracked
         ticker = Range("A" & i).Value
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' increment result row
-        firstTickerRow = i
         resultRow = resultRow + 1
+        stockVolume = 0
     End If
+    stockVolume = stockVolume + Range("G" & i)
 Next i
 End Sub
 
@@ -212,14 +208,5 @@ Next i
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''' output results
 Range("O4").Value = greatestVolumeTicker
 Range("P4").Value = greatestVolumeValue
-End Sub
-
-Sub ConvertFormulasToValuesInActiveWorksheet()
-Dim rng As Range
-    For Each rng In ActiveSheet.UsedRange
-        If rng.HasFormula Then
-            rng.Formula = rng.Value
-        End If
-    Next rng
 End Sub
 
